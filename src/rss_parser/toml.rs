@@ -21,7 +21,7 @@ pub struct Feed{
 }
 
 
-pub fn parse_toml(rss_path: PathBuf) -> Result<TomlRss, Box<dyn std::error::Error>>{
+pub fn parse_toml(rss_path: &PathBuf) -> Result<TomlRss, Box<dyn std::error::Error>>{
     let content=fs::read_to_string(rss_path)?;
     let toml_content: TomlRss =toml::from_str(&content)?;
     Ok(toml_content)
@@ -38,7 +38,7 @@ mod tests{
         let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
         let project_root = PathBuf::from(manifest_dir);
         let resource_dir=project_root.join("resources").join("feeds.example.toml");
-        let group=parse_toml(resource_dir).unwrap();
+        let group=parse_toml(&resource_dir).unwrap();
         dbg!(group);
     }
     #[test]

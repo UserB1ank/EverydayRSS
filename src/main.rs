@@ -1,6 +1,9 @@
 mod rss_parser;
+mod app;
+
 use clap::Parser;
 use std::path::PathBuf;
+use serde::de::Error;
 
 #[derive(Parser)]
 struct Args {
@@ -10,8 +13,7 @@ struct Args {
     resource_dir: Option<PathBuf>,
 }
 
-fn main() {
+fn main() ->Result<(),Box<dyn std::error::Error>>{
     let args=Args::parse();
-    let resource_dir=args.resource_dir;
-
+    app::run(args)
 }
