@@ -1,0 +1,46 @@
+# ==============================================
+# 订阅源分组（按格式分类）
+# groups下name字段仅为名称，无解析作用
+# ==============================================
+
+# ---------- RSS 2.0 格式 ----------
+[[groups]]
+name = "RSS 2.0"
+
+[[groups.feeds]]
+name = "OpenAI 官方博客"
+url = "https://openai.com/news/rss.xml"
+enabled = true
+
+[[groups.feeds]]
+name = "个人技术博客示例"
+url = "http://yatagarasu.nekoweb.org/feed.xml"
+enabled = true
+
+# ---------- Atom 1.0 格式 ----------
+[[groups]]
+name = "Atom 1.0"
+
+[[groups.feeds]]
+name = "阮一峰的网络日志"
+url = "https://www.ruanyifeng.com/blog/atom.xml"
+enabled = true
+
+[[groups.feeds]]
+name = "Mirror.xyz 示例"
+url = "https://ens.mirror.xyz/feed/atom"
+enabled = true
+
+# ---------- JSON Feed 格式 ----------
+[[groups]]
+name = "JSON Feed"
+
+[[groups.feeds]]
+name = "JSON Feed 官方示例"
+url = "https://jsonfeed.org/feed.json"
+enabled = true
+
+[[groups.feeds]]
+name = "Daring Fireball 博客"
+url = "https://daringfireball.net/feeds/json"
+enabled = true
