@@ -1,0 +1,84 @@
+<rss version="2.0">
+    <channel>
+        <title>Yatagarasu</title>
+        <description>Personal website dedicated to collecting and fandom</description>
+        <link>https://yatagarasu.nekoweb.org</link>
+        <item>
+            <title>Why My Site Doesn't Have Versions</title>
+            <description>Just thinking about it.</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2026-05-01-Why-My-Site-Does-Not-Have-Versions.html</link>
+            <guid isPermaLink="false">YTGRS_011</guid>
+            <pubDate>Fri, 01 May 2026 11:47:00 CST</pubDate>
+        </item>
+        <item>
+            <title>Pure CSS active link styling with SSI</title>
+            <description>Documenting a solution I found online while trying to fix a visual change on my site after switching to use Nekoweb's SSI feature.</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2026-02-14-Show-Current-Page-In-Nav-With-SSI.html</link>
+            <guid isPermaLink="false">YTGRS_010</guid>
+            <pubDate>Sun, 15 Feb 2026 12:19:00 CST</pubDate>
+        </item>
+        <item>
+            <title>Field Museum Field Trip</title>
+            <description>Writing about my visit to see the fossils at the Field Museum of Natural History!</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2026-01-31-Field-Museum-Field-Trip.html</link>
+            <guid isPermaLink="false">YTGRS_009</guid>
+            <pubDate>Sun, 01 Feb 2026 01:12:00 CST</pubDate>
+        </item>
+        <item>
+            <title>Page Added: Fandom</title>
+            <description>In 2026 I don't want to let my fear of cringe keep me from finding joy. Here's a page about that.</description>
+            <link>https://yatagarasu.nekoweb.org/fandom.html</link>
+            <guid isPermaLink="false">YTGRS_008</guid>
+            <pubDate>Wed, 07 Jan 2026 17:21:00 CST</pubDate>
+        </item>
+        <item>
+            <title>New Year Update!</title>
+            <description>To celebrate the new year and hitting a follow milestone, I've created a new theme template!</description>
+            <link>https://yatagarasu.nekoweb.org/templates.html#theme2</link>
+            <guid isPermaLink="false">YTGRS_007</guid>
+            <pubDate>Wed, 31 Dec 2025 18:38:00 CST</pubDate>
+        </item>
+        <item>
+            <title>The Small Web Is Also The Slow Web</title>
+            <description>Moving away from a modern social-media centric frame of mind is harder than just starting a personal website. My rambling about it.</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2025-12-01-The-Small-Web-Is-Also-The-Slow-Web.html</link>
+            <guid isPermaLink="false">YTGRS_006</guid>
+            <pubDate>Mon, 01 Dec 2025 21:13:00 CST</pubDate>
+        </item>
+        <item>
+            <title>100 Webmaster Questions</title>
+            <description>I, too, would like to answer the webmaster questions. I saw some sites I follow do this questionaire and it looked like fun!</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2025-11-02-100-Webmaster-Questions.html</link>
+            <guid isPermaLink="false">YTGRS_005</guid>
+            <pubDate>Sun, 02 Nov 2025 23:39:00 CST</pubDate>
+        </item>
+        <item>
+            <title>My Favorite Dinosaurs</title>
+            <description>A question that has been asked of many a grade-schooler, now answered by me.</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2025-10-10-My-Favorite-Dinosaurs.html</link>
+            <guid isPermaLink="false">YTGRS_004</guid>
+            <pubDate>Fri, 10 Oct 2025 15:20:00 CDT</pubDate>
+        </item>
+        <item>
+        	<title>New Page Template!</title>
+        	<description>I spent way to much time making a joke page so I'm putting it up lol</description>
+        	<link>https://yatagarasu.nekoweb.org/templates.html/#page2</link>
+        	<guid isPermaLink="false">YTGRS_003</guid>
+        	<pubDate>Sat, 23 Aug 2025 17:00:00 CDT</pubDate>
+        </item>
+        <item>
+        	<title>Template Page is Up</title>
+        	<description>After a lot of heming and hawing, my templates page is now up</description>
+        	<link>https://yatagarasu.nekoweb.org/templates.html</link>
+        	<guid isPermaLink="false">YTGRS_002</guid>
+        	<pubDate>Sat, 16 Aug 2025 17:25:00 CDT</pubDate>
+        </item>
+        <item>
+            <title>Ado Hibana World Tour</title>
+            <description>I wrote a little about my experience going to see Ado sing live.</description>
+            <link>https://yatagarasu.nekoweb.org/blog/posts/2025-08-07-Ado-Hibana-World-Tour.html</link>
+            <guid isPermaLink="false">YTGRS_001</guid>
+            <pubDate>Thu, 07 Aug 2025 08:45:00 CDT</pubDate>
+        </item>
+    </channel>
+</rss>

@@ -1,5 +1,5 @@
-mod toml_parser;
-mod rss_parser;
+pub mod toml_parser;
+pub mod rss_parser;
 
 use std::path::PathBuf;
 use std::error::Error;

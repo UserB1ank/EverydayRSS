@@ -1,15 +1,12 @@
-mod parser;
 mod app;
 
 use clap::Parser;
 use std::path::PathBuf;
-use serde::de::Error;
 
 #[derive(Parser)]
 struct Args {
     // Directory containing RSS resource files
     #[arg(short,long)]
-    #[arg()]
     resource_dir: Option<PathBuf>,
 }
 

@@ -4,20 +4,20 @@ use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TomlRss {
-    group:Vec<Group>
+    pub group:Vec<Group>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Group{
-    name:String,
-    feed:Vec<Feed>
+    pub name:String,
+    pub feed:Vec<Feed>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Feed{
-    name:String,
-    url:String,
-    enabled:bool,
+    pub name:String,
+    pub url:String,
+    pub enabled:bool,
 }
 
 

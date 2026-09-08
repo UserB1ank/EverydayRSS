@@ -37,7 +37,7 @@ name = "JSON Feed"
 
 [[group.feed]]
 name = "JSON Feed 官方示例"
-url = "https://jsonfeed.org/feed.json"
+url = "https://www.jsonfeed.org/feed.json"
 enabled = true
 
 [[group.feed]]

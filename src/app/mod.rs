@@ -1,5 +1,5 @@
 use crate::Args;
-use crate::parser::load_resources_from_dir;
+use EverydayRSS::parser::load_resources_from_dir;
 
 pub fn run(args:Args)->Result<(),Box<dyn std::error::Error>>{
     // TODO implement arguments validate
