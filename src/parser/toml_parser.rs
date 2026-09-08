@@ -31,7 +31,7 @@ pub fn parse_toml(rss_path: &PathBuf) -> Result<TomlRss, Box<dyn std::error::Err
 mod tests{
     use std::env;
     use std::path::PathBuf;
-    use crate::rss_parser::toml::parse_toml;
+    use crate::parser::toml_parser::parse_toml;
 
     #[test]
     fn test_parse_toml(){

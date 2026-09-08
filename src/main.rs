@@ -1,4 +1,4 @@
-mod rss_parser;
+mod parser;
 mod app;
 
 use clap::Parser;
