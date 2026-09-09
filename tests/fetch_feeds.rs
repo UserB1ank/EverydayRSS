@@ -71,7 +71,7 @@ async fn test_fetch_all_urls_from_toml(){
                 }else{
                     let sample = &entries[0];
                     println!(
-                        "{} ({}): {} entries, first: title={:?} url={:?}",
+                        "{} ({}): {} entries, first:title={:?} url={:?}",
                         name, url, entries.len(), sample.title, sample.url
                     );
                 }

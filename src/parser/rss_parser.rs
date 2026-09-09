@@ -1,18 +1,8 @@
 use std::time::Duration;
-use reqwest::{Body, Client, Proxy};
+use reqwest::{ Client, Proxy};
+use crate::model::article::Article;
 
-/// description: summary content description
-/// title: title
-/// url: link
-#[derive(Debug,Default)]
-pub struct Feed{
-    pub title:String,
-    pub url:String,
-    pub description:String
-}
-
-
-pub async fn fetch(url:&str,timeout:Option<usize>,proxy: Option<String>)->Result<Vec<Feed>,Box<dyn std::error::Error>>{
+pub async fn fetch(url:&str, timeout:Option<usize>, proxy: Option<String>) ->Result<Vec<Article>,Box<dyn std::error::Error>>{
     //initialize client
     let timeout=timeout.unwrap_or(3);
     let mut builder =Client::builder();
@@ -31,29 +21,29 @@ pub async fn fetch(url:&str,timeout:Option<usize>,proxy: Option<String>)->Result
     Ok(parse_feed(raw)?)
 }
 
-pub fn parse_feed(content:String)->Result<Vec<Feed>,Box<dyn std::error::Error>>{
+pub fn parse_feed(content:String)->Result<Vec<Article>,Box<dyn std::error::Error>>{
     let raw_feed=feed_rs::parser::parse(content.as_bytes())?;
-    let mut feeds:Vec<Feed>=vec![];
+    let mut feed:Vec<Article>=vec![];
     #[cfg(test)]
     dbg!(&raw_feed);
     for entry in raw_feed.entries{
-        let mut feed:Feed=Feed::default();
+        let mut article: Article = Article::default();
 
         if let Some(title)=entry.title{
-            feed.title=title.content;
+            article.title=title.content;
         }
         if let Some(link)=entry.links.first(){
-            feed.url=link.href.clone();
+            article.url=link.href.clone();
         }
         if let Some(summary)=entry.summary{
-            feed.description+=summary.content.as_str();
+            article.description+=summary.content.as_str();
         }
         if let Some(content)=entry.content{
-            feed.description+=content.body.unwrap_or("".to_string()).as_str();
+            article.description+=content.body.unwrap_or("".to_string()).as_str();
         }
-        feeds.push(feed);
+        feed.push(article);
     }
-    Ok(feeds)
+    Ok(feed)
 }
 
 #[cfg(test)]

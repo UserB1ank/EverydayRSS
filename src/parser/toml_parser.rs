@@ -1,25 +1,6 @@
 use std::fs;
 use std::path::PathBuf;
-use serde::{Serialize, Deserialize};
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TomlRss {
-    pub group:Vec<Group>
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Group{
-    pub name:String,
-    pub feed:Vec<Feed>
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Feed{
-    pub name:String,
-    pub url:String,
-    pub enabled:bool,
-}
-
+use crate::model::toml_rss::TomlRss;
 
 pub fn parse_toml(rss_path: &PathBuf) -> Result<TomlRss, Box<dyn std::error::Error>>{
     let content=fs::read_to_string(rss_path)?;
