@@ -4,7 +4,7 @@ pub mod rss_parser;
 use std::path::PathBuf;
 use std::error::Error;
 use std::fs;
-use crate::model::toml_rss::TomlRss;
+use crate::model::resource::TomlRss;
 use crate::parser::toml_parser::{parse_toml};
 
 pub fn load_resources_from_dir(resource_dir:PathBuf) ->Result<Vec<TomlRss>,Box<dyn Error>>{

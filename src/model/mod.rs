@@ -1,2 +1,3 @@
-pub mod toml_rss;
+pub mod resource;
 pub mod article;
+pub mod summary;

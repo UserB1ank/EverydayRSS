@@ -8,11 +8,11 @@ pub struct TomlRss {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Group{
     pub name:String,
-    pub feed:Vec<Feed>
+    pub feed:Vec<FeedResource>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Feed{
+pub struct FeedResource {
     pub name:String,
     pub url:String,
     pub enabled:bool,
