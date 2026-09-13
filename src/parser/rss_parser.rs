@@ -1,8 +1,10 @@
 use std::time::Duration;
 use reqwest::{ Client, Proxy};
+use tracing::debug;
+use crate::app::AppError;
 use crate::model::article::Article;
 
-pub async fn fetch(url:&str, timeout:Option<usize>, proxy: Option<String>) ->Result<Vec<Article>,Box<dyn std::error::Error>>{
+pub async fn fetch(url:&str, timeout: &Option<u32>, proxy: &Option<String>) ->Result<Vec<Article>,AppError>{
     //initialize client
     let timeout=timeout.unwrap_or(3);
     let mut builder =Client::builder();
@@ -14,14 +16,15 @@ pub async fn fetch(url:&str, timeout:Option<usize>, proxy: Option<String>) ->Res
     builder = builder.user_agent("EveryDayRSS");
     let cli=builder.build()?;
     let res=cli.get(url).send().await?;
+    let len=res.content_length().unwrap();
     let raw=res.text().await?;
-    #[cfg(debug_assertions)]
-    println!("reqwest content: {}",raw);
+    debug!("Request content {}",raw);
+    debug!("Total bytes of request result {:?}",len);
     //feed parser
     Ok(parse_feed(raw)?)
 }
 
-pub fn parse_feed(content:String)->Result<Vec<Article>,Box<dyn std::error::Error>>{
+pub fn parse_feed(content:String)->Result<Vec<Article>,AppError>{
     let raw_feed=feed_rs::parser::parse(content.as_bytes())?;
     let mut feed:Vec<Article>=vec![];
     #[cfg(test)]

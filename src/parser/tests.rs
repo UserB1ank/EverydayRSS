@@ -1,8 +1,10 @@
+// converted from tests/ integration tests: this package is binary-only,
+// so crate-internal tests must live inside the module tree
 use std::env;
 use std::fs;
 use std::path::PathBuf;
-use EverydayRSS::parser::load_resources_from_dir;
-use EverydayRSS::parser::rss_parser::{fetch, parse_feed};
+use crate::parser::load_resources_from_dir;
+use crate::parser::rss_parser::{fetch, parse_feed};
 
 // collect enabled feed urls from resources/*.toml in document order
 fn feed_urls_from_toml() -> Vec<(String, String)>{
@@ -21,6 +23,30 @@ fn feed_urls_from_toml() -> Vec<(String, String)>{
         }
     }
     feeds
+}
+
+// offline: load the example feeds config and verify its structure
+#[test]
+fn test_load_resources_from_dir(){
+    let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
+    let resource_dir = PathBuf::from(manifest_dir).join("resources");
+    let rss_resources = load_resources_from_dir(resource_dir).unwrap();
+
+    assert_eq!(rss_resources.len(), 1, "expect exactly one toml file in resources/");
+
+    let rss = &rss_resources[0];
+    assert_eq!(rss.group.len(), 3, "expect 3 groups (RSS 2.0 / Atom 1.0 / JSON Feed)");
+
+    let total: usize = rss.group.iter().map(|g| g.feed.len()).sum();
+    assert_eq!(total, 6, "expect 6 feeds in total");
+
+    for group in &rss.group{
+        assert!(!group.name.is_empty());
+        for feed in &group.feed{
+            assert!(feed.enabled, "feed {} should be enabled", feed.name);
+            assert!(feed.url.starts_with("http"), "feed {} url should be http(s): {}", feed.name, feed.url);
+        }
+    }
 }
 
 // offline: parse the real feed documents previously downloaded from the toml urls
@@ -53,7 +79,7 @@ fn test_parse_real_feed_fixtures(){
 
 // online: fetch and parse every enabled url from the toml config.
 // requires direct outbound network access, run with:
-//   cargo test --test fetch_feeds -- --ignored --nocapture
+//   cargo test test_fetch_all_urls_from_toml -- --ignored --nocapture
 #[tokio::test]
 #[ignore = "hits real network: run manually with `cargo test -- --ignored`"]
 async fn test_fetch_all_urls_from_toml(){
@@ -63,7 +89,7 @@ async fn test_fetch_all_urls_from_toml(){
     let mut failures: Vec<String> = vec![];
 
     for (name, url) in feeds{
-        let result = fetch(&url, Some(10), None).await;
+        let result = fetch(&url, &Some(10), &None).await;
         match result{
             Ok(entries)=>{
                 if entries.is_empty(){
