@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::error::Error;
 use std::fs;
 use crate::model::resource::TomlRss;
-use crate::parser::toml_parser::{parse_toml};
+use crate::parser::toml_parser::{parse_rss_toml};
 
 pub fn load_resources_from_dir(resource_dir:PathBuf) ->Result<Vec<TomlRss>,Box<dyn Error>>{
     let mut rss_resources:Vec<TomlRss>=vec![];
@@ -22,7 +22,7 @@ pub fn load_resources_from_dir(resource_dir:PathBuf) ->Result<Vec<TomlRss>,Box<d
                      if let Some(ext_str)=ext.to_str(){
                          match ext_str.to_lowercase().as_str() {
                              "toml"=>{
-                                 rss_resources.push(parse_toml(&file.path())?)
+                                 rss_resources.push(parse_rss_toml(&file.path())?)
                              },
                              _ => {
                                  // return Err(format!("unsupported file type: {:?}",file.path()).into())
