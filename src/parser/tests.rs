@@ -5,6 +5,7 @@ use std::fs;
 use std::path::PathBuf;
 use crate::parser::load_resources_from_dir;
 use crate::parser::rss_parser::{fetch, parse_feed};
+use crate::model::resource::FeedResource;
 
 // collect enabled feed urls from resources/*.toml in document order
 fn feed_urls_from_toml() -> Vec<(String, String)>{
@@ -86,19 +87,24 @@ async fn test_fetch_all_urls_from_toml(){
     let feeds = feed_urls_from_toml();
     assert_eq!(feeds.len(), 6, "expect 6 enabled feeds in resources/feeds.example.toml");
 
+    let cli = reqwest::Client::builder()
+        .user_agent("EverydayRSS")
+        .build()
+        .unwrap();
     let mut failures: Vec<String> = vec![];
 
     for (name, url) in feeds{
-        let result = fetch(&url, &Some(10), &None).await;
+        let resource = FeedResource{ name: name.clone(), url: url.clone(), enabled: true };
+        let result = fetch(&resource, cli.clone()).await;
         match result{
-            Ok(entries)=>{
-                if entries.is_empty(){
+            Ok(feed)=>{
+                if feed.articles.is_empty(){
                     failures.push(format!("{} ({}): parsed 0 entries", name, url));
                 }else{
-                    let sample = &entries[0];
+                    let sample = &feed.articles[0];
                     println!(
                         "{} ({}): {} entries, first:title={:?} url={:?}",
-                        name, url, entries.len(), sample.title, sample.url
+                        name, url, feed.articles.len(), sample.title, sample.url
                     );
                 }
             },

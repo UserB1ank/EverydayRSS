@@ -1,13 +1,13 @@
 use std::fs;
 use std::path::PathBuf;
+use tracing::debug;
 use crate::app::AppError;
+use crate::config::template::TEMPLATE;
 use crate::model::config::Config;
-use crate::parser::toml_parser::parse_rss_toml;
-
 pub mod prompts;
+mod template;
 
-
-pub fn get_config_dir()->Result<PathBuf,AppError>{
+pub fn get_config_dir() ->Result<PathBuf,AppError>{
     let home=dirs::home_dir();
     match home {
         Some(home)=>{
@@ -27,9 +27,16 @@ pub fn get_config()->Result<Config,AppError>{
 
     if !config_path.exists(){
         let config=Config::default();
-
         let content=toml::to_string_pretty(&config)?;
         fs::write(&config_path,content)?;
+        debug!("Created config file at {}", config_path.display());
+        // init resources dir
+        let resource_dir=config_dir.join("resources");
+        fs::create_dir_all(&resource_dir)?;
+        debug!("Created resources directory at {}", resource_dir.display());
+        let example_toml_path=resource_dir.join("feeds.example.toml");
+        fs::write(&example_toml_path,TEMPLATE)?;
+        debug!("Created example.toml at {}", example_toml_path.display());
         return Ok(config);
     }
 

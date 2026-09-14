@@ -14,10 +14,10 @@ impl Default for Config{
     fn default() -> Self {
         Config{
             llm:LLM::default(),
+            loglevel:"INFO".into(),
+            timeout:Some(3),
             resource_dir:None,
             proxy:None,
-            timeout:Some(3),
-            loglevel:"INFO".into(),
         }
     }
 }

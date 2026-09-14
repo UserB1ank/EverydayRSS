@@ -1,0 +1,47 @@
+pub const TEMPLATE:&str=r#"# ==============================================
+# 订阅源分组（按格式分类）
+# group下name字段仅为名称，无解析作用
+# ==============================================
+
+# ---------- RSS 2.0 格式 ----------
+[[group]]
+name = "RSS 2.0"
+
+[[group.feed]]
+name = "OpenAI 官方博客"
+url = "https://openai.com/news/rss.xml"
+enabled = true
+
+[[group.feed]]
+name = "个人技术博客示例"
+url = "http://yatagarasu.nekoweb.org/feed.xml"
+enabled = true
+
+# ---------- Atom 1.0 格式 ----------
+[[group]]
+name = "Atom 1.0"
+
+[[group.feed]]
+name = "阮一峰的网络日志"
+url = "https://www.ruanyifeng.com/blog/atom.xml"
+enabled = true
+
+[[group.feed]]
+name = "Mirror.xyz 示例"
+url = "https://ens.mirror.xyz/feed/atom"
+enabled = true
+
+# ---------- JSON Feed 格式 ----------
+[[group]]
+name = "JSON Feed"
+
+[[group.feed]]
+name = "JSON Feed 官方示例"
+url = "https://www.jsonfeed.org/feed.json"
+enabled = true
+
+[[group.feed]]
+name = "Daring Fireball 博客"
+url = "https://daringfireball.net/feed/json"
+enabled = true
+"#;

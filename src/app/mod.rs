@@ -1,17 +1,20 @@
 use crate::Args;
-use crate::config::{get_config, get_config_dir};
+use crate::config::get_config_dir;
 use crate::model::article::Feed;
 use crate::model::config::Config;
-use crate::model::resource::GroupRss;
 use crate::parser::load_resources_from_dir;
 use crate::parser::rss_parser::fetch;
 use std::path::PathBuf;
 use std::str::FromStr;
-use tracing::{debug, info};
+use std::time::Duration;
+use reqwest::{Client, Proxy};
+use tracing::{debug, error, info, warn};
 
 pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
+    // TODO implement cfg validate check
+
     // parse resource
-    // TODO implement arguments validate
+    // TODO implement arguments validate check
     // validate resource dir,
     // if there's no args, use the location in config toml
     // else, use default config location
@@ -26,14 +29,36 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
             }
         }
     };
+    let timeout=cfg.timeout.clone();
+    let proxy=cfg.proxy.clone();
+    //build req client args
+    let c_args=ClientArgs{
+        timeout,
+        proxy
+    };
+
+
     let feed_resources = load_resources_from_dir(resources_dir)?;
     if feed_resources.iter().count() <= 0 {
         return Err(format!("resources error : {:?}", feed_resources).into());
     }
 
+    // llm reachable testing
+    let llm=cfg.llm;
+    let cli=build_client(&c_args)?;
+    match llm.is_llm_reachable(cli).await {
+        Ok(true) => info!("LLM is reachable"),
+        Ok(false) => {
+            warn!("LLM is not reachable")
+        },
+        Err(e) => {
+            let msg=format!("LLM reachable testing failed with: {:?}", e);
+            error!("{}", msg);
+            return Err(msg.into());
+        },
+    }
+
     // fetch resource
-    let mut tasks=Vec::new();
-    let timeout=cfg.timeout;
     for toml_rss in feed_resources {
         for group in toml_rss.group {
             info!(
@@ -41,30 +66,48 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
                 group.name,
                 group.feed.iter().count()
             );
+            let mut tasks=Vec::new();
+            let req_client=build_client(&c_args)?;
             for feed in group.feed{
-                let proxy=cfg.proxy.clone();
+
                 if feed.enabled!=true{
                     debug!("Skip disabled feed {} {}",feed.name,feed.url);
                     continue;
                 }
+
                 info!("Fetching articles from {}",feed.name);
+                let cli=req_client.clone();
                 let task=tokio::spawn(async move {
-                    fetch(&feed.url,&timeout,&proxy).await
+                    fetch(&feed,cli).await
                 });
                 tasks.push(task);
             }
+            let mut feeds: Vec<Feed> = vec![];
+            //fetch content
+            for task in tasks{
+                match task.await{
+                    Ok(Ok(result))=>{
+                        debug!("Task finished successfully, rss content : {:?}", result);
+                        feeds.push(result);
+                    },
+                    Ok(Err(e))=>{
+                        warn!("Task finished with error: {}", e);
+                    },
+                    Err(e)=>{
+                        error!("Task failed with : {}", e);
+                    }
+                }
+            }
+            // llm api testing, check whether JSON-formatted output is supported by LLM provider
+
+            // todo llm availability testing
+            // get summary
+
+
         }
     }
-    // let mut feeds: Vec<Feed> = vec![];
-    // for task in tasks{
-    //     match task.await{
-    //         Ok(Ok(result))=>{
-    //
-    //         }
-    //     }
-    // }
 
-    // LLM analyse
+
 
     // Render HTML
 
@@ -73,5 +116,27 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
 }
 
 pub type AppError = Box<dyn std::error::Error + Send + Sync>;
+
+#[derive(Debug,Clone)]
+struct ClientArgs {
+    pub timeout: Option<u32>,
+    pub proxy: Option<String>,
+}
+
+fn build_client(args:&ClientArgs)->Result<Client,AppError>{
+    //initialize client
+    let timeout=args.timeout.unwrap_or(3);
+    let mut builder =Client::builder();
+    builder = builder.timeout(Duration::from_secs(timeout as u64));
+    let proxy=args.proxy.clone();
+    if let Some(proxy)=proxy {
+        let proxy=Proxy::http(proxy)?;
+        builder = builder.proxy(proxy);
+    };
+    builder = builder.user_agent("EverydayRSS");
+    Ok(builder.build()?)
+}
+
 #[cfg(test)]
 mod tests {}
+

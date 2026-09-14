@@ -1,38 +1,34 @@
-use std::time::Duration;
-use reqwest::{ Client, Proxy};
-use tracing::debug;
+use reqwest::Client;
+use tracing::{debug, info};
 use crate::app::AppError;
-use crate::model::article::Article;
+use crate::model::article::{Article, Feed};
+use crate::model::resource::FeedResource;
 
 /// fetch rss feed
-pub async fn fetch(url:&str, timeout: &Option<u32>, proxy: &Option<String>) ->Result<Vec<Article>,AppError>{
-    //initialize client
-    let timeout=timeout.unwrap_or(3);
-    let mut builder =Client::builder();
-    builder = builder.timeout(Duration::from_secs(timeout as u64));
-    if let Some(proxy)=proxy{
-        let proxy=Proxy::http(proxy)?;
-        builder = builder.proxy(proxy);
-    };
-    builder = builder.user_agent("EverydayRSS");
-    let cli=builder.build()?;
-    let res=cli.get(url).send().await?;
-    let len=res.content_length().unwrap();
+pub async fn fetch(feed_rs:&FeedResource,cli:Client) ->Result<Feed,AppError>{
+    let res=cli.get(&feed_rs.url).send().await?;
     let raw=res.text().await?;
+    let len=raw.len();
     debug!("Request content {}",raw);
-    debug!("Total bytes of request result {:?}",len);
+    info!("Total bytes of {} result {:?}",feed_rs.name.clone(),len);
     //feed parser
-    Ok(parse_feed(raw)?)
+    let articles=parse_feed(raw)?;
+    let f = Feed {
+        title: feed_rs.name.clone(),
+        url:   feed_rs.url.clone(),
+        articles,
+    };
+    Ok(f)
 }
 /// parse content of rss feed into EverydayRSS::model::article
 pub fn parse_feed(content:String)->Result<Vec<Article>,AppError>{
     let raw_feed=feed_rs::parser::parse(content.as_bytes())?;
     let mut feed:Vec<Article>=vec![];
-    #[cfg(test)]
-    dbg!(&raw_feed);
+    debug!("raw feed content {:?}", raw_feed);
     for entry in raw_feed.entries{
         let mut article: Article = Article::default();
-
+        // todo filter junk character
+        // todo is junk filter necessary?
         if let Some(title)=entry.title{
             article.title=title.content;
         }
