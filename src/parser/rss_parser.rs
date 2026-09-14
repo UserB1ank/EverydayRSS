@@ -2,6 +2,7 @@ use std::time::Duration;
 use reqwest::{ Client, Proxy};
 use crate::model::article::Article;
 
+/// fetch rss feed
 pub async fn fetch(url:&str, timeout:Option<usize>, proxy: Option<String>) ->Result<Vec<Article>,Box<dyn std::error::Error>>{
     //initialize client
     let timeout=timeout.unwrap_or(3);
@@ -11,7 +12,7 @@ pub async fn fetch(url:&str, timeout:Option<usize>, proxy: Option<String>) ->Res
         let proxy=Proxy::http(proxy)?;
         builder = builder.proxy(proxy);
     };
-    builder = builder.user_agent("EveryDayRSS");
+    builder = builder.user_agent("EverydayRSS");
     let cli=builder.build()?;
     let res=cli.get(url).send().await?;
     let raw=res.text().await?;
@@ -20,7 +21,7 @@ pub async fn fetch(url:&str, timeout:Option<usize>, proxy: Option<String>) ->Res
     //feed parser
     Ok(parse_feed(raw)?)
 }
-
+/// parse content of rss feed into EverydayRSS::model::article
 pub fn parse_feed(content:String)->Result<Vec<Article>,Box<dyn std::error::Error>>{
     let raw_feed=feed_rs::parser::parse(content.as_bytes())?;
     let mut feed:Vec<Article>=vec![];

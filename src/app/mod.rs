@@ -28,7 +28,6 @@ pub fn run(args:Args)->Result<(),Box<dyn std::error::Error>>{
     if rss_resources.iter().count()<=0{
         return Err(format!("resources error : {:?}",rss_resources).into())
     }
-
     Ok(())
 }
 
