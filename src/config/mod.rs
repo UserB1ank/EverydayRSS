@@ -1,12 +1,13 @@
 use std::fs;
 use std::path::PathBuf;
+use crate::app::AppError;
 use crate::model::config::Config;
 use crate::parser::toml_parser::parse_rss_toml;
 
 pub mod prompts;
 
 
-pub fn get_config_dir()->Result<PathBuf,Box<dyn std::error::Error>>{
+pub fn get_config_dir()->Result<PathBuf,AppError>{
     let home=dirs::home_dir();
     match home {
         Some(home)=>{
@@ -20,7 +21,7 @@ pub fn get_config_dir()->Result<PathBuf,Box<dyn std::error::Error>>{
     }
 }
 /// Get config from config dir, default location is ~/.everydayrss/config.toml
-pub fn get_config()->Result<Config,Box<dyn std::error::Error>>{
+pub fn get_config()->Result<Config,AppError>{
     let config_dir=get_config_dir()?;
     let config_path=config_dir.join("config.toml");
 

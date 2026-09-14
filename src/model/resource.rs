@@ -2,11 +2,11 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TomlRss {
-    pub group:Vec<Group>
+    pub group:Vec<GroupRss>
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Group{
+pub struct GroupRss {
     pub name:String,
     pub feed:Vec<FeedResource>
 }

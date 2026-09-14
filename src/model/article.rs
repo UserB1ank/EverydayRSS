@@ -1,5 +1,5 @@
 /// result of fetch feed
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,Default)]
 pub struct Feed{
     pub title:String,
     pub url:String,

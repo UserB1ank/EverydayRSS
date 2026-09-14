@@ -1,8 +1,9 @@
 use std::fs;
 use std::path::PathBuf;
+use crate::app::AppError;
 use crate::model::resource::TomlRss;
 
-pub fn parse_rss_toml(rss_path: &PathBuf) -> Result<TomlRss, Box<dyn std::error::Error>>{
+pub fn parse_rss_toml(rss_path: &PathBuf) -> Result<TomlRss, AppError>{
     let content=fs::read_to_string(rss_path)?;
     let toml_content: TomlRss =toml::from_str(&content)?;
     Ok(toml_content)
