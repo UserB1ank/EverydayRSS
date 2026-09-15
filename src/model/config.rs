@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+pub(crate) use crate::model::llm::LLM;
 
 #[derive(Debug,Deserialize,Serialize)]
 pub struct Config{
@@ -22,10 +23,5 @@ impl Default for Config{
     }
 }
 
-#[derive(Debug,Default,Deserialize,Serialize)]
-pub struct LLM{
-    pub provider:String,
-    pub base_url:String,
-    pub api_key:String,
-}
+
 

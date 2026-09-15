@@ -1,7 +1,7 @@
 use crate::Args;
 use crate::config::get_config_dir;
 use crate::model::article::Feed;
-use crate::model::config::Config;
+use crate::model::config::{Config, LLM};
 use crate::parser::load_resources_from_dir;
 use crate::parser::rss_parser::fetch;
 use std::path::PathBuf;
@@ -98,11 +98,11 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
                     }
                 }
             }
-            // llm api testing, check whether JSON-formatted output is supported by LLM provider
-
-            // todo llm availability testing
+            tasks=Vec::new();
             // get summary
-
+            for feed in feeds{
+                
+            }
 
         }
     }

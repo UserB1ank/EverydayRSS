@@ -5,7 +5,7 @@ use crate::app::AppError;
 use crate::config::template::TEMPLATE;
 use crate::model::config::Config;
 pub mod prompts;
-mod template;
+pub mod template;
 
 pub fn get_config_dir() ->Result<PathBuf,AppError>{
     let home=dirs::home_dir();
