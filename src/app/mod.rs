@@ -1,7 +1,7 @@
 use crate::Args;
 use crate::config::get_config_dir;
 use crate::model::article::Feed;
-use crate::model::config::{Config, LLM};
+use crate::model::config::{Config};
 use crate::parser::load_resources_from_dir;
 use crate::parser::rss_parser::fetch;
 use std::path::PathBuf;
@@ -98,12 +98,13 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
                     }
                 }
             }
-            tasks=Vec::new();
-            // get summary
+            //get summary
             for feed in feeds{
-                
+                info!("Getting summary of {}",feed.title);
+                let cli=req_client.clone();
+                let res=llm.get_summary(cli,&feed).await?;
+                debug!("Got summary: {:?}",res);
             }
-
         }
     }
 
@@ -127,7 +128,7 @@ fn build_client(args:&ClientArgs)->Result<Client,AppError>{
     //initialize client
     let timeout=args.timeout.unwrap_or(3);
     let mut builder =Client::builder();
-    builder = builder.timeout(Duration::from_secs(timeout as u64));
+    builder = builder.connect_timeout(Duration::from_secs(timeout as u64)).read_timeout(Duration::from_secs(30));
     let proxy=args.proxy.clone();
     if let Some(proxy)=proxy {
         let proxy=Proxy::http(proxy)?;

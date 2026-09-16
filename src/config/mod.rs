@@ -2,10 +2,10 @@ use std::fs;
 use std::path::PathBuf;
 use tracing::debug;
 use crate::app::AppError;
-use crate::config::template::TEMPLATE;
+use crate::config::example::EXAMPLE_FEED_TOML;
 use crate::model::config::Config;
 pub mod prompts;
-pub mod template;
+pub mod example;
 
 pub fn get_config_dir() ->Result<PathBuf,AppError>{
     let home=dirs::home_dir();
@@ -35,7 +35,7 @@ pub fn get_config()->Result<Config,AppError>{
         fs::create_dir_all(&resource_dir)?;
         debug!("Created resources directory at {}", resource_dir.display());
         let example_toml_path=resource_dir.join("feeds.example.toml");
-        fs::write(&example_toml_path,TEMPLATE)?;
+        fs::write(&example_toml_path, EXAMPLE_FEED_TOML)?;
         debug!("Created example.toml at {}", example_toml_path.display());
         return Ok(config);
     }

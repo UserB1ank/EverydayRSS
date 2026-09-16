@@ -29,6 +29,7 @@ pub fn parse_feed(content:String)->Result<Vec<Article>,AppError>{
         let mut article: Article = Article::default();
         // todo filter junk character
         // todo is junk filter necessary?
+        // todo article filter, we should filter articles according to scheduled task's cycle
         if let Some(title)=entry.title{
             article.title=title.content;
         }

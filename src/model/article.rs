@@ -9,9 +9,9 @@ pub struct Feed{
 }
 
 /// description: summary content description
-/// title: tictle
+/// title: title
 /// url: link
-#[derive(Debug,Default,Clone,Serialize)]
+#[derive(Debug,Default,Clone,Serialize,Deserialize)]
 pub struct Article {
     pub title:String,
     pub url:String,

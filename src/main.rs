@@ -9,6 +9,7 @@ mod render;
 use app::AppError;
 use clap::Parser;
 use std::path::PathBuf;
+use tracing::{debug, error, info};
 use tracing_subscriber::EnvFilter;
 use crate::config::get_config;
 use crate::model::config::Config;
@@ -22,7 +23,13 @@ pub struct Args {
 
 #[tokio::main]
 async fn main() -> Result<(), AppError> {
-    let mut cfg=get_config()?;
+    let mut cfg=match get_config() {
+        Ok(cfg) => cfg,
+        Err(e)=>{
+            println!("Config error \n {}",e);
+            return Err(e);
+        }
+    };
     cfg.loglevel=cfg.loglevel.to_lowercase();
     let filter = EnvFilter::new(format!(
         "off,EverydayRSS={}",
@@ -37,5 +44,13 @@ async fn main() -> Result<(), AppError> {
     // init config
 
     let cfg:Config=get_config()?;
-    app::run(args,cfg).await
+    match app::run(args,cfg).await {
+        Ok(s) => {
+            Ok(())
+        }
+        Err(e) => {
+            error!("{}",e);
+            Err(e)
+        }
+    }
 }

@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use crate::model::article::Article;
 
 pub struct GroupSummary{
@@ -5,13 +6,14 @@ pub struct GroupSummary{
     feed_summaries:Vec<FeedSummary>
 }
 
-#[derive(Debug,Default)]
+#[derive(Debug,Default,Deserialize)]
 pub struct FeedSummary{
     conclusion:String,
     posts:Vec<Post>
 }
-#[derive(Debug,Default)]
+#[derive(Debug,Default,Deserialize)]
 pub struct Post{
     section:String,
-    articles:Vec<Article>
+    articles:Vec<Article>,
+    analysis:String,
 }
