@@ -2,7 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 use tracing::debug;
 use crate::app::AppError;
-use crate::config::example::EXAMPLE_FEED_TOML;
+use crate::config::example::{EXAMPLE_FEED_TOML, EXAMPLE_SUMMARY_TEMPLATE};
 use crate::model::config::Config;
 pub mod prompts;
 pub mod example;
@@ -37,6 +37,13 @@ pub fn get_config()->Result<Config,AppError>{
         let example_toml_path=resource_dir.join("feeds.example.toml");
         fs::write(&example_toml_path, EXAMPLE_FEED_TOML)?;
         debug!("Created example.toml at {}", example_toml_path.display());
+        //create templates dir
+        let templates_dir=config_dir.join("templates");
+        fs::create_dir_all(&templates_dir)?;
+        debug!("Create templates directory at {}",templates_dir.display());
+        let example_template_path=templates_dir.join("exmaple.template.html");
+        fs::write(&example_template_path,EXAMPLE_SUMMARY_TEMPLATE)?;
+        debug!("Created example_template at {}", example_template_path.display());
         return Ok(config);
     }
 

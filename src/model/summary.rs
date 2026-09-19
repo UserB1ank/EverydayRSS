@@ -6,12 +6,12 @@ pub struct GroupSummary{
     feed_summaries:Vec<FeedSummary>
 }
 
-#[derive(Debug,Default,Deserialize)]
+#[derive(Debug,Default,Deserialize,Serialize)]
 pub struct FeedSummary{
     conclusion:String,
     posts:Vec<Post>
 }
-#[derive(Debug,Default,Deserialize)]
+#[derive(Debug,Default,Deserialize,Serialize)]
 pub struct Post{
     section:String,
     articles:Vec<Article>,

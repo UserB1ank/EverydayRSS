@@ -13,8 +13,7 @@ tokio = { version = "1.53.1",features = ["full"] }
 dirs = "7.0.0"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23",features = ["env-filter"] }
-reqwest-eventsource = "0.6.0"
 serde_json = "1.0.151"
 eventsource-stream = "0.2"
 futures-util = "0.3.34"
-log = "0.4.34"
+tera="2.0.0-alpha.7"

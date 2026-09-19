@@ -57,7 +57,7 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
             return Err(msg.into());
         },
     }
-
+    let mut feed_summaries=vec![];
     // fetch resource
     for toml_rss in feed_resources {
         for group in toml_rss.group {
@@ -104,14 +104,12 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
                 let cli=req_client.clone();
                 let res=llm.get_summary(cli,&feed).await?;
                 debug!("Got summary: {:?}",res);
+                feed_summaries.push(res);
             }
         }
     }
-
-
-
     // Render HTML
-
+    
     // notify
     Ok(())
 }
