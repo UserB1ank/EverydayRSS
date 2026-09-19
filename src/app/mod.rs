@@ -1,3 +1,4 @@
+use std::collections::{BTreeMap, HashMap};
 use crate::Args;
 use crate::config::get_config_dir;
 use crate::model::article::Feed;
@@ -9,6 +10,8 @@ use std::str::FromStr;
 use std::time::Duration;
 use reqwest::{Client, Proxy};
 use tracing::{debug, error, info, warn};
+use crate::model::summary::{FeedSummary};
+use crate::render::render_html;
 
 pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
     // TODO implement cfg validate check
@@ -31,6 +34,8 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
     };
     let timeout=cfg.timeout.clone();
     let proxy=cfg.proxy.clone();
+    let template_path=PathBuf::from_str(cfg.template.as_str())?;
+
     //build req client args
     let c_args=ClientArgs{
         timeout,
@@ -57,10 +62,11 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
             return Err(msg.into());
         },
     }
-    let mut feed_summaries=vec![];
     // fetch resource
+    let mut summary_groups:BTreeMap<String,Vec<FeedSummary>>=BTreeMap::new();
     for toml_rss in feed_resources {
         for group in toml_rss.group {
+            let mut summaries=vec![];
             info!(
                 "Group {}, total count feeds {} ",
                 group.name,
@@ -104,12 +110,13 @@ pub async fn run(args: Args, cfg: Config) -> Result<(), AppError> {
                 let cli=req_client.clone();
                 let res=llm.get_summary(cli,&feed).await?;
                 debug!("Got summary: {:?}",res);
-                feed_summaries.push(res);
+                summaries.push(res);
             }
+            summary_groups.insert(group.name,summaries);
         }
     }
     // Render HTML
-    
+    let output=render_html(summary_groups,&template_path)?;
     // notify
     Ok(())
 }

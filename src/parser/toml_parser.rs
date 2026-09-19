@@ -13,15 +13,16 @@ pub fn parse_rss_toml(rss_path: &PathBuf) -> Result<TomlRss, AppError>{
 mod tests{
     use std::env;
     use std::path::PathBuf;
+    use crate::app::AppError;
+    use crate::config::get_config_dir;
     use crate::parser::toml_parser::parse_rss_toml;
 
     #[test]
-    fn test_parse_toml(){
-        let manifest_dir = env::var("CARGO_MANIFEST_DIR").unwrap();
-        let project_root = PathBuf::from(manifest_dir);
-        let resource_dir=project_root.join("resources").join("feeds.example.toml");
-        let group= parse_rss_toml(&resource_dir).unwrap();
-        dbg!(group);
+    fn test_parse_toml()->Result<(),AppError>{
+        let cfg_dir=get_config_dir()?;
+        let resource=cfg_dir.join("resources").join("feeds.example.toml");
+        let group= parse_rss_toml(&resource)?;
+        Ok(())
     }
     #[test]
     fn test_get_root_path(){

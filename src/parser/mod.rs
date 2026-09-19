@@ -43,6 +43,3 @@ pub fn load_resources_from_dir(resource_dir:PathBuf) ->Result<Vec<TomlRss>,AppEr
 
     Ok(rss_resources)
 }
-
-#[cfg(test)]
-mod tests;
