@@ -158,6 +158,7 @@ model = "example"
         assert_eq!(config.lookback_hours, None);
         assert!(config.include_undated);
         assert_eq!(config.output, "output/daily.html");
+        assert_eq!(config.llm.summary_language, "Chinese");
         Ok(())
     }
 

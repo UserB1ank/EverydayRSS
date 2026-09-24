@@ -138,6 +138,81 @@ pub async fn run(
     Ok(output_path)
 }
 
+pub async fn push(
+    file_override: Option<PathBuf>,
+    config_path: PathBuf,
+    cfg: Config,
+) -> Result<PathBuf, AppError> {
+    if !notify::has_enabled_channel(&cfg.notifications) {
+        return Err(
+            "No notification channel is enabled. Run `everydayrss init` to configure one".into(),
+        );
+    }
+    notify::validate(&cfg.notifications)?;
+
+    let report_path = match file_override {
+        Some(path) => {
+            let path = if path.is_absolute() {
+                path
+            } else {
+                std::env::current_dir()?.join(path)
+            };
+            if !path.is_file() {
+                return Err(format!("Report file not found: {}", path.display()).into());
+            }
+            path
+        }
+        None => latest_report(&resolve_path(&config_path, &cfg.output))?,
+    };
+
+    let html = fs::read_to_string(&report_path)?;
+    let client = build_client(&ClientArgs {
+        timeout: cfg.timeout,
+        proxy: cfg.proxy.clone(),
+    })?;
+    notify::dispatch(&cfg.notifications, &report_path, &html, client)
+        .await
+        .map_err(|error| format!("Failed to push {}: {error}", report_path.display()))?;
+    Ok(report_path)
+}
+
+/// Pick the most recently modified HTML report next to the configured output.
+fn latest_report(output_path: &Path) -> Result<PathBuf, AppError> {
+    let mut newest: Option<(std::time::SystemTime, PathBuf)> = None;
+    if let Some(dir) = output_path.parent()
+        && dir.is_dir()
+    {
+        for entry in fs::read_dir(dir)? {
+            let entry = entry?;
+            let path = entry.path();
+            if !path.is_file() || !is_html(&path) {
+                continue;
+            }
+            let modified = entry.metadata()?.modified()?;
+            if newest.as_ref().is_none_or(|(time, _)| modified > *time) {
+                newest = Some((modified, path));
+            }
+        }
+    }
+    if let Some((_, path)) = newest {
+        return Ok(path);
+    }
+    if output_path.is_file() {
+        return Ok(output_path.to_path_buf());
+    }
+    Err(format!(
+        "No HTML report found in {}. Run `everydayrss run` first",
+        output_path.display()
+    )
+    .into())
+}
+
+fn is_html(path: &Path) -> bool {
+    path.extension()
+        .and_then(|extension| extension.to_str())
+        .is_some_and(|extension| extension.eq_ignore_ascii_case("html"))
+}
+
 pub type AppError = Box<dyn std::error::Error + Send + Sync>;
 
 #[derive(Debug, Clone)]
@@ -185,6 +260,9 @@ fn validate_config(config: &Config) -> Result<(), AppError> {
         return Err(
             "The LLM configuration is incomplete. Run `everydayrss init` to update it".into(),
         );
+    }
+    if config.llm.summary_language.trim().is_empty() {
+        return Err("Summary language cannot be empty".into());
     }
     notify::validate(&config.notifications)?;
     Ok(())

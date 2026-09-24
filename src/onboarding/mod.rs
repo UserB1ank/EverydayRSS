@@ -61,6 +61,11 @@ pub fn run(config_path: &Path, force: bool) -> Result<InitOutcome, AppError> {
     } else {
         text_input(&theme, "Model name", &config.llm.model)?
     };
+    config.llm.summary_language = text_input(
+        &theme,
+        "Summary language",
+        fallback(&config.llm.summary_language, "Chinese"),
+    )?;
 
     let has_key = !config.llm.api_key.is_empty();
     let api_key = Password::with_theme(&theme)
@@ -173,23 +178,13 @@ fn configure_email(theme: &ColorfulTheme, mut email: EmailConfig) -> Result<Emai
     } else {
         text_input(theme, "SMTP host", &email.smtp_host)?
     };
-    email.smtp_port = Input::with_theme(theme)
-        .with_prompt("SMTP port")
-        .default(email.smtp_port)
-        .validate_with(|value: &u16| -> Result<(), &str> {
-            if *value > 0 {
-                Ok(())
-            } else {
-                Err("Must be greater than 0")
-            }
-        })
-        .interact_text()?;
+    let previous_security = email.security.to_ascii_lowercase();
     let securities = [
         "STARTTLS (commonly port 587)",
         "TLS (commonly port 465)",
-        "No encryption",
+        "No encryption (commonly port 25)",
     ];
-    let security_default = match email.security.as_str() {
+    let security_default = match previous_security.as_str() {
         "tls" => 1,
         "none" => 2,
         _ => 0,
@@ -205,6 +200,31 @@ fn configure_email(theme: &ColorfulTheme, mut email: EmailConfig) -> Result<Emai
         _ => "starttls",
     }
     .to_string();
+    let recommended_port = recommended_smtp_port(&email.security);
+    let default_port = smtp_port_default(&previous_security, &email.security, email.smtp_port);
+    email.smtp_port = Input::with_theme(theme)
+        .with_prompt(format!(
+            "SMTP port (recommended for {}: {})",
+            smtp_security_label(&email.security),
+            recommended_port
+        ))
+        .default(default_port)
+        .validate_with(|value: &u16| -> Result<(), &str> {
+            if *value > 0 {
+                Ok(())
+            } else {
+                Err("Must be greater than 0")
+            }
+        })
+        .interact_text()?;
+    if email.smtp_port != recommended_port {
+        eprintln!(
+            "Warning: {} commonly uses port {}, but port {} was selected. Keep this only if your SMTP provider requires a custom port.",
+            smtp_security_label(&email.security),
+            recommended_port,
+            email.smtp_port
+        );
+    }
     email.username = optional_input(theme, "SMTP username (optional)", &email.username)?;
     let password = Password::with_theme(theme)
         .with_prompt(if email.password.is_empty() {
@@ -246,6 +266,30 @@ fn configure_email(theme: &ColorfulTheme, mut email: EmailConfig) -> Result<Emai
         .collect();
     email.subject = text_input(theme, "Email subject", &email.subject)?;
     Ok(email)
+}
+
+fn recommended_smtp_port(security: &str) -> u16 {
+    match security {
+        "tls" => 465,
+        "none" => 25,
+        _ => 587,
+    }
+}
+
+fn smtp_security_label(security: &str) -> &'static str {
+    match security {
+        "tls" => "TLS",
+        "none" => "unencrypted SMTP",
+        _ => "STARTTLS",
+    }
+}
+
+fn smtp_port_default(previous_security: &str, selected_security: &str, existing_port: u16) -> u16 {
+    if previous_security == selected_security && existing_port > 0 {
+        existing_port
+    } else {
+        recommended_smtp_port(selected_security)
+    }
 }
 
 fn configure_wecom(theme: &ColorfulTheme, mut wecom: WeComConfig) -> Result<WeComConfig, AppError> {
@@ -374,7 +418,7 @@ fn parse_time(value: &str) -> Option<(u8, u8)> {
 
 #[cfg(test)]
 mod tests {
-    use super::parse_time;
+    use super::{parse_time, recommended_smtp_port, smtp_port_default};
 
     #[test]
     fn validates_schedule_times() {
@@ -383,5 +427,19 @@ mod tests {
         assert_eq!(parse_time("24:00"), None);
         assert_eq!(parse_time("10:60"), None);
         assert_eq!(parse_time("ten"), None);
+    }
+
+    #[test]
+    fn recommends_smtp_ports_for_each_security_mode() {
+        assert_eq!(recommended_smtp_port("starttls"), 587);
+        assert_eq!(recommended_smtp_port("tls"), 465);
+        assert_eq!(recommended_smtp_port("none"), 25);
+    }
+
+    #[test]
+    fn changes_default_port_when_security_mode_changes() {
+        assert_eq!(smtp_port_default("starttls", "tls", 587), 465);
+        assert_eq!(smtp_port_default("tls", "starttls", 465), 587);
+        assert_eq!(smtp_port_default("starttls", "starttls", 2525), 2525);
     }
 }

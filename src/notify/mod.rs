@@ -11,6 +11,11 @@ use serde_json::json;
 use crate::app::AppError;
 use crate::model::config::{EmailConfig, NotificationConfig, WeComConfig};
 
+pub fn has_enabled_channel(config: &NotificationConfig) -> bool {
+    config.email.as_ref().is_some_and(|email| email.enabled)
+        || config.wecom.as_ref().is_some_and(|wecom| wecom.enabled)
+}
+
 pub fn validate(config: &NotificationConfig) -> Result<(), AppError> {
     if let Some(email) = config.email.as_ref().filter(|email| email.enabled) {
         validate_email(email)?;

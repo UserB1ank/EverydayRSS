@@ -51,6 +51,12 @@ enum Command {
         #[arg(long)]
         force: bool,
     },
+    /// Push an existing report without regenerating it
+    Push {
+        /// Report HTML file to push (defaults to the most recent report)
+        #[arg(short, long)]
+        file: Option<PathBuf>,
+    },
     /// Install, inspect, or remove the scheduled task
     Schedule {
         #[command(subcommand)]
@@ -91,6 +97,7 @@ async fn main() -> Result<(), AppError> {
         Some(Command::Run { lookback_hours }) => {
             run_once(cli.resource_dir, lookback_hours, config_path).await?
         }
+        Some(Command::Push { file }) => push_report(file, config_path).await?,
         None if !config_path.exists() && io::stdin().is_terminal() => {
             println!("EverydayRSS is not configured yet. Starting the setup wizard.");
             initialize(&config_path, false)?;
@@ -98,6 +105,14 @@ async fn main() -> Result<(), AppError> {
         }
         None => run_once(cli.resource_dir, None, config_path).await?,
     }
+    Ok(())
+}
+
+async fn push_report(file: Option<PathBuf>, config_path: PathBuf) -> Result<(), AppError> {
+    let config = load_config(&config_path)?;
+    init_tracing(&config.loglevel)?;
+    let output = app::push(file, config_path, config).await?;
+    println!("✓ Report pushed: {}", output.display());
     Ok(())
 }
 

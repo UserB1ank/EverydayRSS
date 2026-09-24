@@ -1,5 +1,5 @@
 use crate::app::AppError;
-use crate::config::prompts::PROMPTS;
+use crate::config::prompts::build_prompt;
 use crate::model::article::Feed;
 use crate::model::config::Llm;
 use crate::model::summary::FeedSummary;
@@ -42,7 +42,7 @@ impl Llm {
             messages: vec![
                 Message {
                     role: "system".to_string(),
-                    content: PROMPTS.to_string(),
+                    content: build_prompt(&self.summary_language),
                 },
                 Message {
                     role: "user".to_string(),

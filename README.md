@@ -1,6 +1,6 @@
 # EverydayRSS
 
-EverydayRSS 会抓取指定时间窗口内的 RSS / Atom / JSON Feed 文章，调用 OpenAI 兼容接口生成中文摘要，并输出一份 HTML 日报。它可作为命令行工具单次运行，也可注册为系统每日任务。
+EverydayRSS 会抓取指定时间窗口内的 RSS / Atom / JSON Feed 文章，调用 OpenAI 兼容接口生成摘要，并输出一份 HTML 日报。摘要语言可以配置，默认使用中文。它可作为命令行工具单次运行，也可注册为系统每日任务。
 
 ## 安装
 
@@ -60,6 +60,12 @@ everydayrss run --lookback-hours 2
 # 查看或移除系统任务
 everydayrss schedule status
 everydayrss schedule remove
+
+# 推送最近生成的一份报告
+everydayrss push
+
+# 推送指定的报告文件
+everydayrss push --file ./output/2026-09-24.html
 ```
 
 macOS 使用当前用户的 `launchd`，Linux 使用用户级 `systemd`。建议先通过 `cargo install --path .` 安装稳定路径下的二进制，再注册计划任务。
@@ -74,9 +80,22 @@ macOS 使用当前用户的 `launchd`，Linux 使用用户级 `systemd`。建议
 
 所有相对路径都以 `config.toml` 所在目录为基准，因此计划任务与手动运行会得到一致结果。配置文件可能包含 API Key，在 Unix 系统上会以 `0600` 权限保存。
 
+## 摘要语言
+
+初始化向导中的 `Summary language` 可以设置摘要语言，默认值为 `Chinese`。也可以直接编辑配置：
+
+```toml
+[llm]
+summary_language = "Chinese"
+```
+
+可改为 `English`、`Japanese`、`Simplified Chinese` 等语言名称。该值会写入 LLM 的 system prompt；JSON 字段名始终保持英文，原始文章标题和 URL 不会翻译。
+
 ## 报告推送
 
 重新运行 `everydayrss init` 可以交互式配置推送。邮件使用 SMTP，将完整 HTML 作为邮件正文发送；企业微信使用内部群的自定义机器人 Webhook，上传并发送生成的 HTML 文件。
+
+除了在 `everydayrss run` 时自动推送，也可以用 `everydayrss push` 单独推送已生成的报告：默认推送输出目录中最新的 HTML 文件，或用 `--file` 指定任意 HTML 文件。
 
 也可以直接编辑配置：
 
