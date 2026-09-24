@@ -1,0 +1,7 @@
+[[group]]
+name = "Technology"
+
+[[group.feed]]
+name = "Example"
+url = "https://example.test/feed.xml"
+enabled = true

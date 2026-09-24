@@ -3,12 +3,16 @@ name = "EverydayRSS"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "everydayrss"
+path = "src/main.rs"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.9"
 clap = { version = "4.6.1", features = ["derive","env"] }
 feed-rs = { version = "2.4.0",features = ["sanitize"] }
-reqwest = { version = "0.13.3", features = ["blocking", "json", "stream"] }
+reqwest = { version = "0.13.3", features = ["blocking", "json", "stream", "multipart"] }
 tokio = { version = "1.53.1",features = ["full"] }
 dirs = "7.0.0"
 tracing = "0.1.44"
@@ -16,4 +20,7 @@ tracing-subscriber = { version = "0.3.23",features = ["env-filter"] }
 serde_json = "1.0.151"
 eventsource-stream = "0.2"
 futures-util = "0.3.34"
-tera="2.0.0-alpha.7"
+tera = "2.0.0-alpha.7"
+chrono = { version = "0.4", features = ["serde"] }
+dialoguer = "0.12"
+lettre = { version = "0.11", default-features = false, features = ["builder", "smtp-transport", "tokio1-rustls-tls"] }

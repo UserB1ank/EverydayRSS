@@ -4,7 +4,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>每日资讯纵览</title>
+    <title>Daily News Digest</title>
 
     <style>
         :root {
@@ -88,7 +88,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             margin: 0 auto;
         }
 
-        /* 页面头部 */
+        /* Page header */
         .page-header {
             margin-bottom: 50px;
             text-align: center;
@@ -124,7 +124,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             font-size: 1rem;
         }
 
-        /* 分组 */
+        /* Groups */
         .group {
             margin-bottom: 64px;
         }
@@ -174,7 +174,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             line-height: 1.3;
         }
 
-        /* 时间线 */
+        /* Timeline */
         .timeline {
             position: relative;
             margin-left: 21px;
@@ -182,7 +182,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             border-left: 3px solid #c7d2fe;
         }
 
-        /* 摘要卡片 */
+        /* Summary card */
         .summary-card {
             position: relative;
             margin-bottom: 34px;
@@ -231,7 +231,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             );
         }
 
-        /* 综合摘要 */
+        /* Overall summary */
         .conclusion {
             position: relative;
             z-index: 1;
@@ -263,7 +263,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             overflow-wrap: anywhere;
         }
 
-        /* 内容分区 */
+        /* Content section */
         .section {
             position: relative;
             z-index: 1;
@@ -300,7 +300,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             color: #273449;
         }
 
-        /* 文章 */
+        /* Article */
         .article-list {
             display: grid;
             gap: 12px;
@@ -359,7 +359,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             overflow-wrap: anywhere;
         }
 
-        /* 分析内容 */
+        /* Analysis */
         .analysis {
             margin-top: 18px;
             padding: 17px 19px;
@@ -386,7 +386,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             overflow-wrap: anywhere;
         }
 
-        /* 空状态 */
+        /* Empty state */
         .empty-state {
             padding: 34px 24px;
             text-align: center;
@@ -415,7 +415,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             font-size: 0.9rem;
         }
 
-        /* 页脚 */
+        /* Footer */
         footer {
             margin-top: 80px;
             padding-top: 24px;
@@ -425,7 +425,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             border-top: 1px solid rgba(203, 213, 225, 0.8);
         }
 
-        /* 移动端 */
+        /* Mobile */
         @media (max-width: 680px) {
             body {
                 padding: 30px 14px;
@@ -473,7 +473,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             }
         }
 
-        /* 打印与导出 PDF */
+        /* Print and PDF export */
         @media print {
             body {
                 padding: 0;
@@ -513,19 +513,19 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             ✦ RSS DIGEST
         </div>
 
-        <h1 class="page-title">每日资讯纵览</h1>
+        <h1 class="page-title">Daily News Digest</h1>
 
         <p class="page-subtitle">
-            聚合不同信息源的重要内容，快速了解今日动态、核心观点与趋势分析。
+            Important updates, key perspectives, and trend analysis from your feeds.
         </p>
     </header>
 
     {% if groups | length == 0 %}
     <section class="empty-state">
         <i class="empty-icon">📭</i>
-        <p class="empty-title">暂无订阅分组</p>
+        <p class="empty-title">No feed groups</p>
         <p class="empty-description">
-            当前没有可以展示的资讯内容。
+            There is no feed content to display yet.
         </p>
     </section>
     {% else %}
@@ -547,9 +547,9 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             {% if summaries | length == 0 %}
             <div class="empty-state">
                 <i class="empty-icon">☕</i>
-                <p class="empty-title">该分组今日暂无更新</p>
+                <p class="empty-title">No updates in this group</p>
                 <p class="empty-description">
-                    暂时没有获取到可以展示的摘要内容。
+                    No summaries are currently available for this group.
                 </p>
             </div>
             {% else %}
@@ -562,7 +562,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
                     <section class="conclusion">
                         <div class="conclusion-title">
                             <span>✨</span>
-                            <span>综合摘要</span>
+                            <span>Overall Summary</span>
                         </div>
 
                         <div class="conclusion-content">
@@ -574,9 +574,9 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
                     {% if summary.posts | length == 0 %}
                     <div class="empty-state">
                         <i class="empty-icon">🗂️</i>
-                        <p class="empty-title">暂无详细内容</p>
+                        <p class="empty-title">No details available</p>
                         <p class="empty-description">
-                            该摘要目前没有关联的文章分类。
+                            This summary does not contain any article categories.
                         </p>
                     </div>
                     {% else %}
@@ -594,7 +594,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
                             {% if post.articles | length == 0 %}
                             <div class="empty-state">
                                 <i class="empty-icon">📄</i>
-                                <p class="empty-title">该分类暂无文章</p>
+                                <p class="empty-title">No articles in this category</p>
                             </div>
                             {% else %}
 
@@ -627,7 +627,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
                             <aside class="analysis">
                                 <div class="analysis-title">
                                     <span>💡</span>
-                                    <span>趋势与观点</span>
+                                    <span>Trends and Perspective</span>
                                 </div>
 
                                 <div class="analysis-content">
@@ -649,117 +649,117 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
     {% endif %}
 
     <footer>
-        聚合信息仅供参考 · Generated with Rust and Tera
+        Aggregated information is for reference only · Generated with Rust and Tera
     </footer>
 </main>
 </body>
 </html>
 "#;
 
-
-pub const EXAMPLE_FEED_TOML:&str=r#"# ==============================================
-# 订阅源分组（按格式分类）
-# group下name字段仅为名称，无解析作用
+pub const EXAMPLE_FEED_TOML: &str = r#"# ==============================================
+# Feed groups organized by format
+# The group name is a display label only and does not affect parsing
 # ==============================================
 
-# ---------- RSS 2.0 格式 ----------
+# ---------- RSS 2.0 ----------
 [[group]]
 name = "RSS 2.0"
 
 [[group.feed]]
-name = "OpenAI 官方博客"
+name = "OpenAI Blog"
 url = "https://openai.com/news/rss.xml"
 enabled = true
 
 [[group.feed]]
-name = "个人技术博客示例"
+name = "Personal Technology Blog Example"
 url = "http://yatagarasu.nekoweb.org/feed.xml"
 enabled = true
 
-# ---------- Atom 1.0 格式 ----------
+# ---------- Atom 1.0 ----------
 [[group]]
 name = "Atom 1.0"
 
 [[group.feed]]
-name = "阮一峰的网络日志"
+name = "Ruanyifeng's Blog"
 url = "https://www.ruanyifeng.com/blog/atom.xml"
 enabled = true
 
 [[group.feed]]
-name = "Mirror.xyz 示例"
+name = "Mirror.xyz Example"
 url = "https://ens.mirror.xyz/feed/atom"
 enabled = true
 
-# ---------- JSON Feed 格式 ----------
+# ---------- JSON Feed ----------
 [[group]]
 name = "JSON Feed"
 
 [[group.feed]]
-name = "JSON Feed 官方示例"
+name = "Official JSON Feed Example"
 url = "https://www.jsonfeed.org/feed.json"
 enabled = true
 
 [[group.feed]]
-name = "Daring Fireball 博客"
+name = "Daring Fireball"
 url = "https://daringfireball.net/feed/json"
 enabled = true
 "#;
 
-pub const EXAMPLE_SUMMARY_OUTPUT:&str=r#"{
-  "conclusion": "今日OpenAI官方博客更新文章约500篇，覆盖模型发布、Codex与智能体、企业落地、安全治理、医疗科学、教育、基础设施、政策合作、消费者产品及公司治理等十大方向。核心主线是GPT-6 Astra、GPT-5.6 等前沿模型迭代，以及Codex从编码工具升级为智能体平台。安全方面，OpenAI达到网络安全Critical级别并强化红队与威胁情报。基础设施上，Stargate、自研芯片与多云合作加速算力扩张。医疗、教育、政府合作持续深化。 分析师建议企业优先评估最新模型与Codex在工作流中的ROI，同时建立AI安全治理与合规框架，以应对能力快速提升带来的风险与机遇。",
+#[cfg(test)]
+pub const EXAMPLE_SUMMARY_OUTPUT: &str = r#"{
+  "conclusion": "The OpenAI blog published roughly 500 updates spanning model releases, Codex and agents, enterprise adoption, safety governance, health and science, education, infrastructure, public policy, consumer products, and corporate governance. The main themes were rapid frontier-model iteration and Codex's evolution from a coding tool into an agent platform. OpenAI also expanded red-team work, threat intelligence, infrastructure investment, and partnerships across healthcare, education, and government. Organizations should assess the return on investment of new models and Codex workflows while establishing security, governance, and compliance controls that can keep pace with improving capabilities.",
   "posts": [
     {
-      "section": "基础设施、算力与合作伙伴",
+      "section": "Infrastructure and partnerships",
       "articles": [
         {
           "title": "Announcing The Stargate Project",
           "url": "https://openai.com/index/announcing-the-stargate-project",
-          "description": "OpenAI宣布Stargate项目，计划投资5000亿美元建设AI基础设施，首批数据中心在美国展开。该项目联合Oracle、SoftBank等伙伴，旨在扩展算力以支持AGI，创造就业并巩固美国AI领导地位。"
+          "description": "OpenAI announced the Stargate project, a planned investment in AI infrastructure with initial data centers in the United States. The project brings together partners including Oracle and SoftBank to expand computing capacity, support advanced AI development, create jobs, and strengthen the domestic AI ecosystem."
         },
         {
           "title": "OpenAI and Broadcom unveil LLM-optimized inference chip",
           "url": "https://openai.com/index/openai-broadcom-jalapeno-inference-chip",
-          "description": "OpenAI与博通推出Jalapeño，一款专为LLM推理优化的定制AI芯片，旨在提升性能、能效和规模。该芯片针对现代模型的高吞吐与低延迟需求，有望降低推理成本，并减少对通用GPU的依赖。"
+          "description": "OpenAI and Broadcom introduced Jalapeno, a custom chip optimized for large-model inference. It targets the throughput and latency requirements of modern models and is intended to improve performance, energy efficiency, and deployment scale while reducing inference cost and reliance on general-purpose GPUs."
         },
         {
           "title": "AWS and OpenAI announce multi-year strategic partnership",
           "url": "https://openai.com/index/aws-and-openai-partnership",
-          "description": "OpenAI与AWS达成多年期380亿美元战略合作，AWS将为OpenAI提供世界级基础设施和算力，支持下一代模型训练。该合作扩展OpenAI的云战略，也反映AI算力需求正推动超大规模云厂商深度绑定。"
+          "description": "OpenAI and AWS announced a multi-year strategic partnership under which AWS will provide infrastructure and computing capacity for next-generation model training. The agreement broadens OpenAI's cloud strategy and illustrates how rapidly growing AI demand is driving deeper relationships with hyperscale cloud providers."
         }
       ],
-      "analysis": "分析师认为，算力与基础设施已成为AI竞争的核心瓶颈。OpenAI通过Stargate、自研芯片、多云合作和数据库优化，构建从训练到推理的全栈能力。企业应关注AI算力成本、数据驻留与云战略，提前规划可 扩展的AI基础设施。"
+      "analysis": "Compute and infrastructure are central constraints in AI competition. OpenAI is combining large infrastructure programs, custom chips, multi-cloud partnerships, and software optimization into a full-stack strategy. Organizations should plan for compute cost, data residency, portability, and scalable deployment capacity."
     },
     {
-      "section": "政策、政府与国际合作",
+      "section": "Policy and government",
       "articles": [
         {
           "title": "Expanding AI access and cyber defense for federal, state, local, and tribal governments",
           "url": "https://openai.com/index/expanding-ai-access-us-government",
-          "description": "OpenAI与GSA合作，向符合条件的美国联邦、州、地方和部落政府提供零许可费、50%用量折扣及扩展网络防御支持。该举措旨在加速公共部门AI采用，同时强化政府网络安全能力。"
+          "description": "OpenAI partnered with the GSA to offer eligible United States federal, state, local, and tribal governments discounted access and expanded cyber-defense support. The program is intended to accelerate responsible public-sector AI adoption while strengthening government cybersecurity capabilities."
         },
         {
           "title": "Industrial policy for the Intelligence Age",
           "url": "https://openai.com/index/industrial-policy-for-the-intelligence-age",
-          "description": "OpenAI提出面向智能时代的产业政策建议，聚焦扩大机会、共享繁荣和建设韧性机构。该政策框架主张通过投资、教育与社会保障，确保AI收益广泛分配，并应对劳动力市场转型。"
+          "description": "OpenAI proposed an industrial policy framework for the intelligence age focused on expanding opportunity, sharing prosperity, and building resilient institutions. The recommendations emphasize investment, education, and social protections so that AI benefits are broadly distributed while labor markets adapt."
         }
       ],
-      "analysis": "分析师认为，OpenAI正通过政府合作、合规认证和政策倡议，深度参与AI治理。其策略兼顾安全、创新与公共利益，在欧美等关键市场推动监管对齐。企业应关注政策变化对AI部署、数据跨境和采购的影响 。"
+      "analysis": "OpenAI is participating in AI governance through government partnerships, compliance programs, and policy proposals. Organizations should monitor how changing rules affect deployment, cross-border data movement, procurement, and risk management in major markets."
     },
     {
-      "section": "消费者产品与功能更新",
+      "section": "Consumer product updates",
       "articles": [
         {
           "title": "Introducing ChatGPT Images 2.5",
           "url": "https://openai.com/index/introducing-chatgpt-images-2-5",
-          "description": "OpenAI推出ChatGPT Images 2.5，可将想法、草图和参考照片转化为更个性化、精致的图像。该版本在文本渲染、多语言支持和视觉推理上改进，帮助用户更轻松地创建高质量视觉内容。"
+          "description": "OpenAI introduced ChatGPT Images 2.5, which turns ideas, sketches, and reference photos into more personalized and polished images. The release improves text rendering, multilingual support, and visual reasoning to make high-quality visual creation easier."
         },
         {
           "title": "Introducing ChatGPT search",
           "url": "https://openai.com/index/introducing-chatgpt-search",
-          "description": "OpenAI推出ChatGPT搜索，提供快速、及时的答案并附相关网页来源链接。该功能将搜索与对话结合，帮助用户获取最新信息，同时保持可验证性，对传统搜索市场形成竞争压力。"
+          "description": "OpenAI introduced ChatGPT search, providing timely answers with links to relevant web sources. The feature combines search and conversation so users can retrieve current information while retaining source visibility and verifiability."
         }
       ],
-      "analysis": "分析师认为，ChatGPT正从聊天助手演进为覆盖图像、语音、搜索、购物和记忆的超级入口。OpenAI通过多模态和代理能力增强用户粘性，并探索广告与商业变现。企业应关注对话式商务和语音交互带来的新渠道。"
+      "analysis": "ChatGPT is evolving from a conversational assistant into a broader interface spanning images, voice, search, shopping, and memory. Organizations should watch how multimodal agents, conversational commerce, and voice interaction create new customer channels and business models."
     }
   ]
 }"#;
