@@ -1,5 +1,6 @@
 mod app;
 mod config;
+mod daemon;
 mod llm;
 mod model;
 mod notify;
@@ -44,6 +45,12 @@ enum Command {
         /// Temporarily override the article date window in hours
         #[arg(long, value_parser = clap::value_parser!(u32).range(1..))]
         lookback_hours: Option<u32>,
+    },
+    /// Keep running and generate reports according to the configured schedule
+    Daemon {
+        /// Generate one report immediately before waiting for the next trigger
+        #[arg(long)]
+        run_on_start: bool,
     },
     /// Start the initial setup wizard
     Init {
@@ -97,6 +104,11 @@ async fn main() -> Result<(), AppError> {
         Some(Command::Run { lookback_hours }) => {
             run_once(cli.resource_dir, lookback_hours, config_path).await?
         }
+        Some(Command::Daemon { run_on_start }) => {
+            let config = load_config(&config_path)?;
+            init_tracing(&config.loglevel)?;
+            daemon::run(config_path, run_on_start).await?;
+        }
         Some(Command::Push { file }) => push_report(file, config_path).await?,
         None if !config_path.exists() && io::stdin().is_terminal() => {
             println!("EverydayRSS is not configured yet. Starting the setup wizard.");
@@ -120,11 +132,7 @@ fn initialize(config_path: &std::path::Path, force: bool) -> Result<(), AppError
     let outcome = onboarding::run(config_path, force)?;
     if let Some(schedule) = outcome.schedule {
         let path = install_schedule(config_path, schedule.clone())?;
-        println!(
-            "✓ Scheduled task registered ({}): {}",
-            schedule.description(),
-            path.display()
-        );
+        print_schedule_configured(&schedule, &path);
     }
     Ok(())
 }
@@ -159,13 +167,19 @@ fn handle_schedule(
                 |hours| ScheduleConfig::Interval { hours },
             );
             let path = install_schedule(config_path, schedule.clone())?;
-            println!(
-                "✓ Scheduled task registered ({}): {}",
-                schedule.description(),
-                path.display()
-            );
+            print_schedule_configured(&schedule, &path);
         }
         ScheduleCommand::Status => {
+            if internal_scheduler_enabled() {
+                let config = load_config(config_path)?;
+                println!("Scheduler backend: built-in daemon");
+                println!("Configuration file: {}", config_path.display());
+                println!("Configured: {}", yes_no(config.schedule.is_some()));
+                if let Some(schedule) = config.schedule {
+                    println!("Configured schedule: {}", schedule.description());
+                }
+                return Ok(());
+            }
             let status = schedule::status()?;
             println!("Definition file: {}", status.definition_path.display());
             println!("Installed: {}", yes_no(status.installed));
@@ -177,7 +191,11 @@ fn handle_schedule(
             }
         }
         ScheduleCommand::Remove => {
-            let path = schedule::remove()?;
+            let path = if internal_scheduler_enabled() {
+                config_path.to_path_buf()
+            } else {
+                schedule::remove()?
+            };
             if let Ok(mut config) = load_config(config_path) {
                 config.schedule = None;
                 save_config(config_path, &config)?;
@@ -193,10 +211,35 @@ fn install_schedule(
     schedule_config: ScheduleConfig,
 ) -> Result<PathBuf, AppError> {
     let mut config = load_config(config_path)?;
-    let path = schedule::install(config_path, &schedule_config)?;
+    let path = if internal_scheduler_enabled() {
+        schedule::validate_schedule(&schedule_config)?;
+        config_path.to_path_buf()
+    } else {
+        schedule::install(config_path, &schedule_config)?
+    };
     config.schedule = Some(schedule_config);
     save_config(config_path, &config)?;
     Ok(path)
+}
+
+fn internal_scheduler_enabled() -> bool {
+    std::env::var("EVERYDAYRSS_SCHEDULER").is_ok_and(|value| value.eq_ignore_ascii_case("internal"))
+}
+
+fn print_schedule_configured(schedule: &ScheduleConfig, path: &std::path::Path) {
+    if internal_scheduler_enabled() {
+        println!(
+            "✓ Built-in scheduler configured ({}): {}",
+            schedule.description(),
+            path.display()
+        );
+    } else {
+        println!(
+            "✓ Scheduled task registered ({}): {}",
+            schedule.description(),
+            path.display()
+        );
+    }
 }
 
 fn init_tracing(level: &str) -> Result<(), AppError> {

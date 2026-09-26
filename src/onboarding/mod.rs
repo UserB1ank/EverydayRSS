@@ -159,8 +159,15 @@ pub fn run(config_path: &Path, force: bool) -> Result<InitOutcome, AppError> {
     save_config(config_path, &config)?;
     println!("\n✓ Configuration saved to {}", config_path.display());
 
+    let internal_scheduler = std::env::var("EVERYDAYRSS_SCHEDULER")
+        .is_ok_and(|value| value.eq_ignore_ascii_case("internal"));
+    let schedule_prompt = if internal_scheduler {
+        "Configure the built-in scheduler now"
+    } else {
+        "Register the scheduled task now"
+    };
     let schedule = if Confirm::with_theme(&theme)
-        .with_prompt("Register the scheduled task now")
+        .with_prompt(schedule_prompt)
         .default(true)
         .interact()?
     {

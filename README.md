@@ -56,12 +56,56 @@ flowchart LR
 ## 🚀 快速开始
 
 > [!NOTE]
-> 需要 **Rust 1.85+**(项目使用 Rust 2024 edition)。
+> 需要 **Rust 1.88+**(项目使用 Rust 2024 edition,依赖项的当前 MSRV 为 1.88)。
 
 ```bash
 cargo install --path .
 everydayrss init
 ```
+
+### 🐳 GHCR 容器
+
+镜像同时支持 `linux/amd64` 与 `linux/arm64`。先创建持久化卷并运行交互式初始化:
+
+> [!NOTE]
+> GHCR 包首次发布时默认为私有。公开使用前可在 GitHub Package 设置中改为 **Public**;保持私有时,请先使用具备 `read:packages` 权限的 Token 登录: `echo "$GHCR_TOKEN" | docker login ghcr.io -u YOUR_GITHUB_USER --password-stdin`。
+
+```bash
+docker volume create everydayrss-data
+
+docker run --rm -it \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest init
+```
+
+初始化时配置每日或间隔计划。随后以后台容器启动内置调度器,并通过 `TZ` 指定每日任务使用的时区:
+
+```bash
+docker run -d \
+  --name everydayrss \
+  --restart unless-stopped \
+  -e TZ=Asia/Shanghai \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest
+
+docker logs -f everydayrss
+```
+
+镜像默认执行 `everydayrss daemon`:到达计划时间时自动生成报告并推送,单次任务失败不会导致容器退出。配置、订阅源、模板和输出报告都保存在 `everydayrss-data` 卷中。
+
+手动立即生成一次日报或执行其他子命令:
+
+```bash
+docker run --rm \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest run
+
+docker run --rm \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest schedule status
+```
+
+容器中的 `schedule install` 只更新内置调度配置,不会调用 systemd。修改计划后重启容器即可立即按新周期重新计算下一次触发时间。也可以使用 `daemon --run-on-start` 在容器启动时先执行一次。
 
 首次直接运行 `everydayrss` 时,如果默认配置不存在,也会自动进入初始化向导。向导会依次配置 **LLM → 订阅目录 → 报告路径 → 日期窗口 → 邮件/企业微信推送**,并可选择立即注册计划任务。
 
@@ -93,6 +137,7 @@ enabled = true
 | 命令 | 作用 |
 |---|---|
 | `everydayrss run` | 抓取 → 摘要 → 渲染一份日报(并自动推送) |
+| `everydayrss daemon` | 常驻运行并按配置的计划生成、推送日报 |
 | `everydayrss init` | 重新进入交互式配置向导 |
 | `everydayrss push` | 单独推送最近生成的一份报告 |
 | `everydayrss schedule install` | 注册系统计划任务 |

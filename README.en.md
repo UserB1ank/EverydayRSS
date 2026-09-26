@@ -56,12 +56,56 @@ flowchart LR
 ## 🚀 Quick Start
 
 > [!NOTE]
-> Requires **Rust 1.85+** (the project uses the Rust 2024 edition).
+> Requires **Rust 1.88+** (the project uses the Rust 2024 edition and its current dependency MSRV is 1.88).
 
 ```bash
 cargo install --path .
 everydayrss init
 ```
+
+### 🐳 GHCR Container
+
+The image supports both `linux/amd64` and `linux/arm64`. Create a persistent volume and run the interactive setup first:
+
+> [!NOTE]
+> A GHCR package is private when first published. Set it to **Public** in the GitHub Package settings for anonymous pulls. If it remains private, log in with a token that has `read:packages`: `echo "$GHCR_TOKEN" | docker login ghcr.io -u YOUR_GITHUB_USER --password-stdin`.
+
+```bash
+docker volume create everydayrss-data
+
+docker run --rm -it \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest init
+```
+
+Choose a daily or interval schedule during setup. Then start the built-in scheduler as a background container, setting `TZ` for daily wall-clock times:
+
+```bash
+docker run -d \
+  --name everydayrss \
+  --restart unless-stopped \
+  -e TZ=Asia/Shanghai \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest
+
+docker logs -f everydayrss
+```
+
+The image runs `everydayrss daemon` by default. It generates and delivers a report at each trigger, while an individual failed run is logged without stopping the container. Configuration, feeds, templates, and generated reports remain in the `everydayrss-data` volume.
+
+Generate a report immediately or run another subcommand:
+
+```bash
+docker run --rm \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest run
+
+docker run --rm \
+  -v everydayrss-data:/data \
+  ghcr.io/userb1ank/everydayrss:latest schedule status
+```
+
+Inside the container, `schedule install` only updates the built-in scheduler configuration and never calls systemd. Restart the container after changing the schedule so the next trigger is recalculated immediately. Use `daemon --run-on-start` to run once as soon as the container starts.
 
 If no default config exists when you run `everydayrss` for the first time, the setup wizard starts automatically. It configures **LLM → feed catalog → report path → date window → email/WeCom push**, and can register the scheduled task right away.
 
@@ -93,6 +137,7 @@ enabled = true
 | Command | What it does |
 |---|---|
 | `everydayrss run` | Fetch → summarize → render one report (and auto-push) |
+| `everydayrss daemon` | Stay running and generate/deliver reports on schedule |
 | `everydayrss init` | Re-run the interactive setup wizard |
 | `everydayrss push` | Push the most recently generated report |
 | `everydayrss schedule install` | Register the system scheduled task |

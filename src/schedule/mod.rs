@@ -64,7 +64,7 @@ pub fn status() -> Result<ScheduleStatus, AppError> {
     }
 }
 
-fn validate_schedule(schedule: &ScheduleConfig) -> Result<(), AppError> {
+pub(crate) fn validate_schedule(schedule: &ScheduleConfig) -> Result<(), AppError> {
     match schedule {
         ScheduleConfig::Daily { hour, minute } if *hour > 23 || *minute > 59 => {
             Err("The scheduled time must be between 00:00 and 23:59".into())

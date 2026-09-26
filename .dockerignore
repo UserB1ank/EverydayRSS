@@ -1,0 +1,12 @@
+.git
+.github
+.idea
+.everydayrss
+target
+debug
+output
+examples
+**/*.rs.bk
+**/mutants.out
+*.pdb
+config.toml
