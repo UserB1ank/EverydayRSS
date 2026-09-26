@@ -250,6 +250,7 @@ fn install_systemd(
         Command::new("systemctl").args(["--user", "enable", "--now", "everydayrss.timer"]),
         "Enable the systemd scheduled task",
     )?;
+    ensure_linger();
     Ok(timer_path)
 }
 
@@ -289,8 +290,53 @@ fn status_systemd() -> Result<ScheduleStatus, AppError> {
 }
 
 #[cfg(target_os = "linux")]
-fn systemd_quote(path: &Path) -> String {
-    format!("\"{}\"", systemd_escape(path, true))
+fn ensure_linger() {
+    let username = match Command::new("id").arg("-un").output() {
+        Ok(output) if output.status.success() => {
+            String::from_utf8_lossy(&output.stdout).trim().to_string()
+        }
+        _ => return,
+    };
+    if username.is_empty() {
+        return;
+    }
+
+    let lingering = Command::new("loginctl")
+        .arg("show-user")
+        .arg(&username)
+        .args(["--property=Linger", "--value"])
+        .output()
+        .ok()
+        .filter(|output| output.status.success())
+        .is_some_and(|output| String::from_utf8_lossy(&output.stdout).trim() == "yes");
+    if lingering {
+        return;
+    }
+
+    // Self-linger is permitted for active users on most distributions; when
+    // it is not, surface the privileged command instead of failing install.
+    let enabled = Command::new("loginctl")
+        .arg("enable-linger")
+        .output()
+        .map(|output| output.status.success())
+        .unwrap_or(false);
+    if enabled {
+        println!(
+            "✓ Linger enabled for user {username}: the timer now fires without an active login."
+        );
+    } else {
+        println!(
+            "⚠ Linger is off for user {username}: the timer only fires while this user is logged in."
+        );
+        println!("  Make it persistent with: sudo loginctl enable-linger {username}");
+    }
+}
+
+#[cfg(target_os = "linux")]
+fn systemd_argument(path: &Path) -> String {
+    // Older systemd releases treat a leading double quote as part of the
+    // executable path, so escape special characters instead of quoting.
+    systemd_escape(path, true)
 }
 
 #[cfg(target_os = "linux")]
@@ -323,8 +369,8 @@ fn render_systemd_service(config_path: &Path, executable: &Path, working_dir: &P
     format!(
         "[Unit]\nDescription=EverydayRSS daily digest\n\n[Service]\nType=oneshot\nWorkingDirectory={}\nExecStart={} --config {} run\n",
         systemd_working_directory(working_dir),
-        systemd_quote(executable),
-        systemd_quote(config_path),
+        systemd_argument(executable),
+        systemd_argument(config_path),
     )
 }
 
@@ -411,7 +457,7 @@ mod tests {
 
     #[cfg(target_os = "linux")]
     #[test]
-    fn systemd_service_does_not_quote_working_directory() {
+    fn systemd_service_escapes_paths_without_quotes() {
         use std::path::Path;
 
         let definition = super::render_systemd_service(
@@ -422,8 +468,8 @@ mod tests {
 
         assert!(definition.contains("WorkingDirectory=/tmp/rss\\x20config\n"));
         assert!(definition.contains(
-            "ExecStart=\"/usr/local/bin/everydayrss\" --config \"/tmp/rss\\x20config/config.toml\" run"
+            "ExecStart=/usr/local/bin/everydayrss --config /tmp/rss\\x20config/config.toml run"
         ));
-        assert!(!definition.contains("WorkingDirectory=\""));
+        assert!(!definition.contains('"'));
     }
 }

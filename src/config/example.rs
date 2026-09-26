@@ -8,29 +8,34 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
 
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-light: #eef2ff;
-            --primary-dark: #3730a3;
+            --cobalt: #3f5793;
+            --cobalt-deep: #263b70;
+            --cobalt-soft: #edf1fb;
 
-            --accent: #0891b2;
-            --accent-light: #ecfeff;
+            --teal: #2d847d;
+            --teal-soft: #e8f4f1;
 
-            --warning: #f59e0b;
-            --warning-light: #fffbeb;
+            --coral: #cf6b57;
+            --coral-soft: #fbeee9;
 
-            --success: #16a34a;
+            --amber: #c78a2c;
+            --amber-soft: #fcf3df;
 
-            --page-start: #f8fafc;
-            --page-end: #eef2ff;
-            --card: rgba(255, 255, 255, 0.94);
-            --article-bg: #f8fafc;
+            --plum: #735c85;
+            --plum-soft: #f2edf6;
 
-            --text: #172033;
-            --muted: #64748b;
-            --border: #e2e8f0;
+            --page-start: #f8f3eb;
+            --page-middle: #f4f6f2;
+            --page-end: #edf2f4;
+            --card: rgba(255, 253, 249, 0.94);
+            --article-bg: rgba(250, 248, 244, 0.92);
 
-            --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.06);
-            --shadow-md: 0 16px 40px rgba(15, 23, 42, 0.10);
+            --text: #202839;
+            --muted: #687080;
+            --border: #dddcd7;
+
+            --shadow-sm: 0 5px 16px rgba(48, 66, 92, 0.08);
+            --shadow-md: 0 20px 52px rgba(48, 66, 92, 0.13);
 
             --radius-sm: 10px;
             --radius-md: 16px;
@@ -62,20 +67,31 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             color: var(--text);
             background:
                 radial-gradient(
-                    circle at top left,
-                    rgba(79, 70, 229, 0.12),
-                    transparent 32%
+                    circle at 8% 4%,
+                    rgba(207, 107, 87, 0.18),
+                    transparent 28%
                 ),
                 radial-gradient(
-                    circle at top right,
-                    rgba(8, 145, 178, 0.10),
-                    transparent 28%
+                    circle at 92% 8%,
+                    rgba(45, 132, 125, 0.16),
+                    transparent 26%
+                ),
+                radial-gradient(
+                    circle at 72% 78%,
+                    rgba(199, 138, 44, 0.10),
+                    transparent 30%
                 ),
                 linear-gradient(
                     180deg,
                     var(--page-start),
+                    var(--page-middle) 48%,
                     var(--page-end)
                 );
+        }
+
+        ::selection {
+            color: #ffffff;
+            background: var(--coral);
         }
 
         a {
@@ -100,12 +116,16 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             gap: 8px;
             margin-bottom: 16px;
             padding: 7px 14px;
-            color: var(--primary-dark);
+            color: #6c3f36;
             font-size: 0.88rem;
             font-weight: 700;
             letter-spacing: 0.04em;
-            background: rgba(238, 242, 255, 0.86);
-            border: 1px solid #c7d2fe;
+            background: linear-gradient(
+                90deg,
+                rgba(251, 238, 233, 0.94),
+                rgba(252, 243, 223, 0.94)
+            );
+            border: 1px solid #edc8b8;
             border-radius: 999px;
         }
 
@@ -126,7 +146,36 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
 
         /* Groups */
         .group {
+            --group-strong: var(--cobalt);
+            --group-deep: var(--cobalt-deep);
+            --group-secondary: var(--teal);
+            --group-soft: var(--cobalt-soft);
+            --group-border: #cbd5ed;
             margin-bottom: 64px;
+        }
+
+        .group:nth-of-type(4n + 2) {
+            --group-strong: var(--teal);
+            --group-deep: #1e625d;
+            --group-secondary: var(--amber);
+            --group-soft: var(--teal-soft);
+            --group-border: #bddbd5;
+        }
+
+        .group:nth-of-type(4n + 3) {
+            --group-strong: var(--coral);
+            --group-deep: #914437;
+            --group-secondary: var(--plum);
+            --group-soft: var(--coral-soft);
+            --group-border: #edc8bd;
+        }
+
+        .group:nth-of-type(4n) {
+            --group-strong: var(--plum);
+            --group-deep: #503d61;
+            --group-secondary: var(--cobalt);
+            --group-soft: var(--plum-soft);
+            --group-border: #d7c9df;
         }
 
         .group-header {
@@ -147,8 +196,8 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             font-size: 1.15rem;
             background: linear-gradient(
                 135deg,
-                var(--primary),
-                var(--accent)
+                var(--group-strong),
+                var(--group-secondary)
             );
             border-radius: 14px;
             box-shadow: var(--shadow-sm);
@@ -160,7 +209,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
 
         .group-label {
             margin-bottom: 2px;
-            color: var(--muted);
+            color: var(--group-strong);
             font-size: 0.76rem;
             font-weight: 700;
             letter-spacing: 0.12em;
@@ -179,7 +228,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             position: relative;
             margin-left: 21px;
             padding-left: 34px;
-            border-left: 3px solid #c7d2fe;
+            border-left: 3px solid var(--group-border);
         }
 
         /* Summary card */
@@ -189,7 +238,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             padding: 28px;
             overflow: hidden;
             background: var(--card);
-            border: 1px solid rgba(226, 232, 240, 0.9);
+            border: 1px solid rgba(218, 216, 208, 0.92);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-md);
             backdrop-filter: blur(12px);
@@ -208,12 +257,12 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             content: "";
             background: linear-gradient(
                 135deg,
-                var(--primary),
-                var(--accent)
+                var(--group-strong),
+                var(--group-secondary)
             );
-            border: 5px solid #eef2ff;
+            border: 5px solid var(--group-soft);
             border-radius: 50%;
-            box-shadow: 0 0 0 2px #c7d2fe;
+            box-shadow: 0 0 0 2px var(--group-border);
         }
 
         .summary-card::after {
@@ -226,8 +275,8 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             content: "";
             background: radial-gradient(
                 circle at top right,
-                rgba(79, 70, 229, 0.08),
-                transparent 68%
+                var(--group-soft),
+                transparent 70%
             );
         }
 
@@ -239,10 +288,10 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             padding: 20px 22px;
             background: linear-gradient(
                 135deg,
-                var(--primary-light),
-                var(--accent-light)
+                var(--group-soft),
+                rgba(252, 243, 223, 0.72)
             );
-            border: 1px solid #c7d2fe;
+            border: 1px solid var(--group-border);
             border-radius: var(--radius-md);
         }
 
@@ -251,7 +300,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             align-items: center;
             gap: 8px;
             margin-bottom: 9px;
-            color: var(--primary-dark);
+            color: var(--group-deep);
             font-size: 0.92rem;
             font-weight: 800;
             letter-spacing: 0.03em;
@@ -287,8 +336,8 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             flex: 0 0 auto;
             background: linear-gradient(
                 180deg,
-                var(--primary),
-                var(--accent)
+                var(--group-strong),
+                var(--group-secondary)
             );
             border-radius: 99px;
         }
@@ -297,7 +346,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             margin: 0;
             font-size: 1.12rem;
             line-height: 1.4;
-            color: #273449;
+            color: var(--group-deep);
         }
 
         /* Article */
@@ -320,8 +369,8 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
 
         .article:hover {
             transform: translateY(-2px);
-            background: #ffffff;
-            border-color: #a5b4fc;
+            background: #fffefa;
+            border-color: var(--group-border);
             box-shadow: var(--shadow-sm);
         }
 
@@ -334,11 +383,11 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
         .article-link-icon {
             flex: 0 0 auto;
             margin-top: 2px;
-            color: var(--primary);
+            color: var(--group-strong);
         }
 
         .article a {
-            color: var(--primary-dark);
+            color: var(--group-deep);
             font-weight: 700;
             line-height: 1.5;
             text-decoration: none;
@@ -346,7 +395,7 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
         }
 
         .article a:hover {
-            color: var(--primary);
+            color: var(--group-strong);
             text-decoration: underline;
             text-underline-offset: 3px;
         }
@@ -363,9 +412,13 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
         .analysis {
             margin-top: 18px;
             padding: 17px 19px;
-            background: var(--warning-light);
-            border: 1px solid #fde68a;
-            border-left: 5px solid var(--warning);
+            background: linear-gradient(
+                110deg,
+                var(--amber-soft),
+                rgba(251, 238, 233, 0.78)
+            );
+            border: 1px solid #ead19e;
+            border-left: 5px solid var(--amber);
             border-radius: var(--radius-sm);
         }
 
@@ -374,13 +427,13 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             align-items: center;
             gap: 8px;
             margin-bottom: 7px;
-            color: #92400e;
+            color: #81551d;
             font-size: 0.9rem;
             font-weight: 800;
         }
 
         .analysis-content {
-            color: #78350f;
+            color: #654a2b;
             font-size: 0.95rem;
             white-space: pre-wrap;
             overflow-wrap: anywhere;
@@ -391,8 +444,8 @@ pub const EXAMPLE_SUMMARY_TEMPLATE: &str = r#"<!DOCTYPE html>
             padding: 34px 24px;
             text-align: center;
             color: var(--muted);
-            background: rgba(255, 255, 255, 0.72);
-            border: 1px dashed #cbd5e1;
+            background: rgba(255, 253, 249, 0.76);
+            border: 1px dashed #c9c6bd;
             border-radius: var(--radius-md);
         }
 

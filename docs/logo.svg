@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="EverydayRSS logo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="55%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+    <linearGradient id="spark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="8" y="8" width="240" height="240" rx="52" fill="url(#bg)"/>
+
+  <!-- RSS arcs -->
+  <g fill="none" stroke="#FFFFFF" stroke-linecap="round">
+    <path d="M 72 108 A 76 76 0 0 1 148 184" stroke-width="18"/>
+    <path d="M 72 148 A 36 36 0 0 1 108 184" stroke-width="18"/>
+  </g>
+  <circle cx="76" cy="180" r="13" fill="#FFFFFF"/>
+
+  <!-- AI sparkle -->
+  <path d="M 186 34 L 194 58 L 218 66 L 194 74 L 186 98 L 178 74 L 154 66 L 178 58 Z" fill="url(#spark)"/>
+  <path d="M 216 108 L 220 120 L 232 124 L 220 128 L 216 140 L 212 128 L 200 124 L 212 120 Z" fill="#FDE68A" opacity="0.9"/>
+</svg>
